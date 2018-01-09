@@ -1,3 +1,6 @@
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 public class KdTree {
     int dim = 2;
     Node root = null;
@@ -10,6 +13,21 @@ public class KdTree {
         return root == null;
     }
 
+    public int size() {
+        if (root == null)
+            return 0;
+        int size = 0;
+        Queue<Node> q = new ArrayDeque<>();
+        q.offer(root);
+        while (!q.isEmpty()) {
+            Node t = q.poll();
+            size++;
+            if (t.left != null) q.offer(t.left);
+            if (t.right != null) q.offer(t.right);
+        }
+        return size;
+    }
+
     public boolean insert(Node t) {
         if (root == null) {
             root = t;
@@ -19,6 +37,10 @@ public class KdTree {
         Node currRoot = root;
         while (true) {
             if (t.point[currDim] <= currRoot.point[currDim]) {
+                if (currRoot.equals(t)) {
+                    System.err.println("Node already exist in tree");
+                    return false;
+                }
                 if (currRoot.left == null) {
                     currRoot.left = t;
                     break;
@@ -56,7 +78,7 @@ public class KdTree {
     public boolean delete(Node t) {
         if (dim != t.point.length || root == null)
             return false;
-        delete(root, t, 0);
+        root = delete(root, t, 0);
         return true;
     }
 
