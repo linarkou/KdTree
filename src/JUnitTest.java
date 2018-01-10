@@ -1,6 +1,9 @@
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Random;
+
 public class JUnitTest {
 
     KdTree createTree() {
@@ -45,5 +48,66 @@ public class JUnitTest {
         Assert.assertTrue(tree.search(root));
         tree.delete(root);
         Assert.assertFalse(tree.search(root));
+    }
+
+    KdTree createRandomTree(int k, int n) {
+        KdTree tree = new KdTree(k);
+        Node[] nodes = createRandomNodes(k,n);
+        for (Node t : nodes)
+            tree.insert(t);
+        return tree;
+    }
+
+    KdTree createRandomTree(Node[] nodes) {
+        if (nodes.length == 0)
+            return null;
+        int k = nodes[0].point.length;
+        KdTree tree = new KdTree(k);
+        for (Node t : nodes)
+            tree.insert(t);
+        return tree;
+    }
+
+    Node[] createRandomNodes(int k, int n) {
+        Random r = new Random();
+        Node[] nodes = new Node[n];
+        for (int i = 0; i < n; ++i) {
+            int[] point = new int[k];
+            for (int j = 0; j < k; ++j) {
+                point[j] = r.nextInt();
+            }
+            nodes[i] = new Node(point);
+        }
+        return nodes;
+    }
+
+    @Test
+    public void searchRandomTest() {
+        Random r = new Random();
+        int k = 2+r.nextInt(10);
+        int n = 1000 + r.nextInt(100000);
+        Node[] nodes = createRandomNodes(k,n);
+        KdTree tree = createRandomTree(nodes);
+        for (Node t : nodes)
+            Assert.assertTrue(tree.search(t));
+    }
+
+    @Test
+    public void deleteAndSearchRandomTest() {
+        Random r = new Random();
+        int k = 2;//+r.nextInt(10);
+        int n = 10;//00 + r.nextInt(100000);
+        Node[] nodes = createRandomNodes(k,n);
+        KdTree tree = createRandomTree(nodes);
+        int sz = nodes.length;
+        for (int i = 0; i < n; ++i)
+            nodes[i] = new Node(nodes[i].point);
+        for (int i = 0; i < n; ++i) {
+            Node t = nodes[i];
+            Assert.assertTrue(tree.delete(t));
+            sz--;
+            Assert.assertEquals(sz,tree.size());
+            Assert.assertFalse(tree.search(t));
+        }
     }
 }
