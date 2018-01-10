@@ -79,9 +79,11 @@ public class KdTree {
     public boolean delete(Node t) {
         if (dim != t.point.length || root == null)
             return false;
-        boolean res = this.search(t);
+        boolean isExist = this.search(t);
+        if (isExist == false)
+            return false;
         root = delete(root, t, 0);
-        return res;
+        return true;
     }
 
     private Node delete(Node currRoot, Node t, int currDim) {
