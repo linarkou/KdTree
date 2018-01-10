@@ -12,6 +12,6 @@ Supported operations:
 <a href="/Resources">Benchmark charts</a>
 <h1>Used Links</h1>
 <ul>
-<li><a href="en.wikipedia.org/wiki/K-d_tree">Wikipedia</a></li>
-<li><a href="en.wikipedia.org/wiki/K-d_tree">GeekForGeeks</a></li>
+<li><a href="https://en.wikipedia.org/wiki/K-d_tree">Wikipedia</a></li>
+<li><a href="https://www.geeksforgeeks.org/k-dimensional-tree/">GeekForGeeks</a></li>
 </ul>
