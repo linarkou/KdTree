@@ -9,11 +9,11 @@ public class Benchmark {
     static int[] dims = new int[]{2,5,10,20,100};
     public static void main(String[] args) {
         isWorstCase = false;
-        insertionBenchmark(1000000);
+        //insertionBenchmark(1000000);
         searchBenchmark(100000);
         deleteBenchmark(100000);
         isWorstCase = true;
-        insertionBenchmark(10000);
+        //insertionBenchmark(10000);
         searchBenchmark(10000);
         deleteBenchmark(10000);
     }
@@ -23,7 +23,7 @@ public class Benchmark {
         Random r = new Random();
         int T = 1000;
         long[][] time = new long[dims.length][N/T+1];
-        for (int repeats = 1; repeats <= 100; ++repeats) {
+        for (int repeats = 1; repeats <= 1000; ++repeats) {
             System.out.println(repeats);
             for (int d = 0; d < dims.length; ++d) {
                 tree = new KdTree(dims[d]);
@@ -65,7 +65,7 @@ public class Benchmark {
                         for (int j = 1; j <= i; ++j)
                             tree.search(nodes[j]);
                         long end = System.nanoTime();
-                        time[d][i / T] = ((end - start) + time[d][i / T] * (repeats - 1)) / repeats;
+                        time[d][i / T] = ((end - start) / i + time[d][i / T] * (repeats - 1)) / repeats;
                     }
                 }
             }
@@ -91,9 +91,15 @@ public class Benchmark {
                 System.out.println(d);
                 tree = new KdTree(dims[d]);
                 Node[] nodes = generateRandomNodes(N, d);
+                Node[] nodesCopy = new Node[N+1];
+                Node[] backup = new Node[N+1];
+                for (int j = 1; j <= N; ++j)
+                    backup[j] = new Node(nodes[j].point);
                 for (int i = 1; i <= N; ++i) {
                     tree.insert(nodes[i]);
                     if (i % T == 0) {
+                        for (int j = 1; j <= i; ++j)
+                            nodesCopy[j] = new Node(backup[j].point);
                         List<Integer> perm = new ArrayList<>(i);
                         for (int j = 0; j < i; ++j)
                             perm.add(j);
@@ -101,12 +107,12 @@ public class Benchmark {
                         //int sz = tree.size();
                         long start = System.nanoTime();
                         for (int j = 1; j <= i; ++j) {
-                            tree.delete(new Node(nodes[perm.get(j - 1) + 1].point));
+                            tree.delete(nodesCopy[perm.get(j - 1) + 1]);
                         }
                         long end = System.nanoTime();
-                        time[d][i / T] = ((end - start) + time[d][i / T] * (repeats - 1)) / repeats;
+                        time[d][i / T] = ((end - start) / i + time[d][i / T] * (repeats - 1)) / repeats;
                         for (int j = 1; j <= i; ++j)
-                            tree.delete(nodes[i]);
+                            tree.insert(nodesCopy[j]);
                     }
                 }
             }
