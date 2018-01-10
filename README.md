@@ -6,7 +6,7 @@ Supported operations:
 <ul> 
   <li>Insert - method KdTree.insert(Node)</li>
   <li>Search - method KdTree.search(Node)</li>
-  <li>Delete - method KdTree.insert(Node)</li>
+  <li>Delete - method KdTree.delete(Node)</li>
 </ul>
 <h2>Tests</h2>
 <a href="/Resources">Benchmark charts</a>
