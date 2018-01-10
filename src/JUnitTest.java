@@ -50,6 +50,22 @@ public class JUnitTest {
         Assert.assertFalse(tree.search(root));
     }
 
+    @Test
+    public void searchInEmptyTreeTest() {
+        int k = 5;
+        KdTree tree = new KdTree(k);
+        Node t = createRandomNodes(5,1)[0];
+        Assert.assertFalse(tree.search(t));
+    }
+
+    @Test
+    public void deleteFromEmptyTreeTest() {
+        int k = 5;
+        KdTree tree = new KdTree(k);
+        Node t = createRandomNodes(5,1)[0];
+        Assert.assertFalse(tree.delete(t));
+    }
+
     KdTree createRandomTree(int k, int n) {
         KdTree tree = new KdTree(k);
         Node[] nodes = createRandomNodes(k,n);
