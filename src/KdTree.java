@@ -1,5 +1,6 @@
-import java.util.ArrayDeque;
-import java.util.Queue;
+import javafx.util.Pair;
+
+import java.util.*;
 
 public class KdTree {
     int dim = 2;
@@ -36,7 +37,7 @@ public class KdTree {
         int currDim = 0;
         Node currRoot = root;
         while (true) {
-            if (t.point[currDim] <= currRoot.point[currDim]) {
+            if (t.point[currDim] < currRoot.point[currDim]) {
                 if (currRoot.equals(t)) {
                     System.err.println("Node already exist in tree");
                     return false;
@@ -66,7 +67,7 @@ public class KdTree {
         while (currRoot != null) {
             if (currRoot.equals(t))
                 return true;
-            if (t.point[currDim] <= currRoot.point[currDim])
+            if (t.point[currDim] < currRoot.point[currDim])
                 currRoot = currRoot.left;
             else
                 currRoot = currRoot.right;
@@ -90,18 +91,22 @@ public class KdTree {
         if (t.equals(currRoot)) {
             if (currRoot.right != null) {
                 Node rightMin = findMinimum(currRoot.right, currDim, currDim + 1);
-                swap(rightMin, currRoot);
+                currRoot.point = rightMin.point;
                 currRoot.right = delete(currRoot.right, rightMin, currDim + 1);
             } else if (currRoot.left != null) {
                 Node leftMin = findMinimum(currRoot.left, currDim, currDim + 1);
-                swap(leftMin, currRoot);
+                currRoot.point = leftMin.point;
                 currRoot.right = delete(currRoot.left, leftMin, currDim + 1);
+                currRoot.left = null;
             } else {
                 return null;
             }
+            if (currRoot.left != null && currRoot.left.point[currDim] >= currRoot.point[currDim] ||
+                    currRoot.right != null && currRoot.right.point[currDim] < currRoot.point[currDim])
+                System.err.println("SOMETHING WRONG");
             return currRoot;
         }
-        if (t.point[currDim] <= currRoot.point[currDim]) {
+        if (t.point[currDim] < currRoot.point[currDim]) {
             currRoot.left = delete(currRoot.left, t, currDim + 1);
         } else {
             currRoot.right = delete(currRoot.right, t, currDim + 1);
@@ -110,27 +115,21 @@ public class KdTree {
     }
 
     private Node findMinimum(Node root, int targetDim, int currDim) {
-        if (root.left == null) {
-            if (root.right == null || currDim == targetDim)
+        if (root == null)
+            return null;
+        if (targetDim == currDim) {
+            if (root.left == null)
                 return root;
             // else
-            return findMinimum(root.right, targetDim, (currDim + 1) % dim);
-        } else {
-            Node leftMin = findMinimum(root.left, targetDim, (currDim + 1) % dim);
-            if (root.right == null || currDim == targetDim)
-                return leftMin;
-            // else
-            Node rightMin = findMinimum(root.right, targetDim, (currDim + 1) % dim);
-            if (rightMin.point[targetDim] < leftMin.point[targetDim])
-                return rightMin;
-            else
-                return leftMin;
+            return findMinimum(root.left, targetDim, (currDim + 1) % dim);
         }
-    }
-
-    private void swap(Node t1, Node t2) {
-        int[] t1point = t1.point;
-        t1.point = t2.point;
-        t2.point= t1point;
+        Node rightMin = findMinimum(root.right, targetDim, (currDim + 1) % dim);
+        Node leftMin = findMinimum(root.left, targetDim, (currDim + 1) % dim);
+        Node res = root;
+        if (rightMin != null && rightMin.point[targetDim] < res.point[targetDim])
+            res = rightMin;
+        if (leftMin != null && leftMin.point[targetDim] < res.point[targetDim])
+            res = leftMin;
+        return res;
     }
 }
